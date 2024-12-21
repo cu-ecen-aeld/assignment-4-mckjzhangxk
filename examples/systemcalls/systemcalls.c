@@ -2,6 +2,7 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <fcntl.h>
+#include <sys/wait.h>
 /**
  * @param cmd the command to execute with system()
  * @return true if the command in @param cmd was executed
@@ -71,7 +72,8 @@ bool do_exec(int count, ...)
         exit(1);
     }else if(r>0){
 	    wait(&r);
-	    return true;
+	    if(r==0)
+	    	return true;
     }
     return false;
 }
@@ -110,14 +112,15 @@ bool do_exec_redirect(const char *outputfile, int count, ...)
 
     if(r==0){
         int fd=open(outputfile,O_RDWR);
-        dup2(1,fd);
-        dup2(2,fd);
-        // close(fd);
+        dup2(fd,1);
+        dup2(fd,2);
+         close(fd);
         r=execv(command[0],command);
         exit(1);
     }else if(r>0){
 	    wait(&r);
-	    return true;
+	    if(r==0)
+	    	return true;
     }
     return false;
 }
