@@ -1,0 +1,5 @@
+
+config BR2_PACKAGE_MYSERVER
+	bool "myserver"
+	help
+	   myserver
